@@ -26,6 +26,9 @@
     "LibraryTracksText": "Tracks",
     "LibraryAlbumsText": "Albums",
     "LibraryPlaylistsText": "Playlists",
+    "LibraryPlaylistCreateText": "Give a name to your playlist...",
+    "LibraryPlaylistCreateBtn": "Create",
+
 
     "MusicListTracks": "Track",
     "MusicListTracksPlural": "Tracks",

@@ -11,7 +11,8 @@ import { User } from "src/app/models/user";
 import { forkJoin } from "rxjs";
 import { YoutubePlayerStatus } from "src/app/models/youtube-player-status";
 import { TranslateService } from "@ngx-translate/core";
-
+import { Output } from "@angular/core";
+import { EventEmitter } from "@angular/core";
 
 @Component({
     selector: "app-content-list",
@@ -36,11 +37,19 @@ export class ContentListComponent extends SettingsBase implements OnInit {
     settings: Settings[];
 
     @Input() title: string;
-    @Input() type: "track" | "playlist" | "album" | "artist" | "show" | "podcast";
+    @Input() type:
+        | "track"
+        | "playlist"
+        | "album"
+        | "artist"
+        | "show"
+        | "podcast";
     @Input() list: any[];
     @Input() rootItem: string = null;
     @Input() album: any = null;
     @Input() mobileMode = true;
+
+    @Output() addPlaylist = new EventEmitter();
 
     device_id: string;
     playerState: any;
@@ -52,26 +61,27 @@ export class ContentListComponent extends SettingsBase implements OnInit {
         this.userService.getUser().subscribe((item) => {
             this.user = item;
             this.premium = this.user.product === "premium";
-
             if (this.premium) {
                 this.playerService.getDeviceId().subscribe((deviceId) => {
                     this.device_id = deviceId;
                 });
-
                 this.getPlayerStatus();
             }
-
             super.init();
         });
+    }
+
+    addUserPlaylist(event) {
+        this.addPlaylist.emit(event);
     }
 
     getPlayerStatus() {
         this.playerService.getPlayerStatus().subscribe((item) => {
             this.playerState = item;
             if (this.playerState?.item.type == "track") {
-                this.currentAlbum = this.playerState?.item.album.id
+                this.currentAlbum = this.playerState?.item.album.id;
             } else if (this.playerState?.item.type == "episode") {
-                this.currentAlbum = this.playerState?.item.show.id
+                this.currentAlbum = this.playerState?.item.show.id;
             } else {
                 this.currentAlbum = "";
             }
@@ -98,10 +108,7 @@ export class ContentListComponent extends SettingsBase implements OnInit {
 
     playTrack(selectItem) {
         if (this.premium) {
-            if (
-                this.playerState?.item.id ===
-                this.getRootItem(selectItem).id
-            ) {
+            if (this.playerState?.item.id === this.getRootItem(selectItem).id) {
                 if (!this.playerState?.is_playing) {
                     this.select(this.getRootItem(selectItem).uri);
                 } else {
@@ -130,13 +137,11 @@ export class ContentListComponent extends SettingsBase implements OnInit {
     }
 
     select(selectItem) {
-        this.playerService
-            .play(this.device_id, selectItem)
-            .subscribe(() => {
-                this.playerService.getCurrentState().subscribe((item) => {
-                    this.playerService.setPlayerStatus(item);
-                });
+        this.playerService.play(this.device_id, selectItem).subscribe(() => {
+            this.playerService.getCurrentState().subscribe((item) => {
+                this.playerService.setPlayerStatus(item);
             });
+        });
     }
 
     add(selectItem) {
@@ -198,10 +203,7 @@ export class ContentListComponent extends SettingsBase implements OnInit {
     }
     playEpisode(selectItem) {
         if (this.premium) {
-            if (
-                this.playerState?.item.id ===
-                this.getRootItem(selectItem).id
-            ) {
+            if (this.playerState?.item.id === this.getRootItem(selectItem).id) {
                 if (!this.playerState?.is_playing) {
                     this.select(this.getRootItem(selectItem).uri);
                 } else {
@@ -319,11 +321,15 @@ export class ContentListComponent extends SettingsBase implements OnInit {
         });
     }
 
-    doScroll($event: HTMLInputElement & { target: HTMLInputElement}) {
+    doScroll($event: HTMLInputElement & { target: HTMLInputElement }) {
         const scrollOffset = $event.target.scrollTop;
-        const scrollMax = $event.target.scrollHeight - $event.target.clientHeight;
+        const scrollMax =
+            $event.target.scrollHeight - $event.target.clientHeight;
 
-        if (scrollOffset === scrollMax && this.lastItem < (this.list.length - 1)) {
+        if (
+            scrollOffset === scrollMax &&
+            this.lastItem < this.list.length - 1
+        ) {
             this.lastItem += 10;
         }
     }
