@@ -1,4 +1,5 @@
 export interface Playlist {
-    title: string;
+    name: string;
     description: string;
+    public: boolean;
 }

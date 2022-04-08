@@ -31,15 +31,15 @@
             <input
                 type="text"
                 [placeholder]="'LibraryPlaylistCreateText' | translate"
-                [(ngModel)]="playlist.title"
+                [(ngModel)]="playlist.name"
                 class="form-control"
-                name="title"
-                #title="ngModel"
+                name="name"
+                #name="ngModel"
                 required
             />
             <button
                 (click)="passNewPlaylistDataToLibrary()"
-                [disabled]="!playlist.title"
+                [disabled]="!playlist.name"
                 class="btn-create"
             >
                 {{ "LibraryPlaylistCreateBtn" | translate }}

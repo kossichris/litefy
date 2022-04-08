@@ -3,8 +3,9 @@
 import { ViewChild } from "@angular/core";
 import { Component, OnInit } from "@angular/core";
 import { forkJoin } from "rxjs";
-import { ModalComponent } from "src/app/components/modal/modal.component";
+import { Playlist } from "src/app/models/library";
 import { User } from "src/app/models/user";
+import { SpotifyPlaylistService } from "src/app/services/spotify-playlist.service";
 import { SpotifyUserService } from "src/app/services/spotify-user.service";
 import { UserService } from "src/app/services/user.service";
 
@@ -16,6 +17,7 @@ import { UserService } from "src/app/services/user.service";
 export class LibraryComponent implements OnInit {
     constructor(
         private serviceUsuario: SpotifyUserService,
+        private spotifyPlaylistService: SpotifyPlaylistService,
         private usuario: UserService
     ) {}
 
@@ -52,7 +54,13 @@ export class LibraryComponent implements OnInit {
         });
     }
 
-    addUserPlaylist(event) {
-        console.log(event);
+    addUserPlaylist(playlist: Playlist) {
+        let user_id = this.usuarioLogado.id;
+        this.serviceUsuario.creteUserPlaylist(user_id, playlist).subscribe(
+            () => {
+                this.spotifyPlaylistService.sendDataToModal(false);
+            },
+            (error) => {}
+        );
     }
 }
