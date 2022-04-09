@@ -21,7 +21,7 @@ export class LibraryComponent implements OnInit {
         private usuario: UserService
     ) {}
 
-    userPlaylists: SpotifyApi.PagingObject<SpotifyApi.PlaylistObjectSimplified>;
+    userPlaylists: SpotifyApi.PagingObject<SpotifyApi.PlaylistObjectSimplified>[];
     userAlbums: SpotifyApi.PagingObject<SpotifyApi.SavedAlbumObject>;
     userTracks: SpotifyApi.PagingObject<SpotifyApi.SavedTrackObject>;
 
@@ -51,13 +51,15 @@ export class LibraryComponent implements OnInit {
             this.userPlaylists = items[0].items;
             this.userAlbums = items[1].items;
             this.userTracks = items[2].items;
+            console.log(items[0]);
         });
     }
 
     addUserPlaylist(playlist: Playlist) {
         let user_id = this.usuarioLogado.id;
         this.serviceUsuario.creteUserPlaylist(user_id, playlist).subscribe(
-            () => {
+            (newlyCreatedPlaylist: any) => {
+                this.userPlaylists.unshift(newlyCreatedPlaylist);
                 this.spotifyPlaylistService.sendDataToModal(false);
             },
             (error) => {}

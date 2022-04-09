@@ -54,7 +54,7 @@
     background: #261e1e;
     border-radius: 5px;
     padding: 1em 2em;
-    height: 50%;
+    height: 40%;
 }
 
 .modal__close {
@@ -115,7 +115,7 @@ form {
     display: flex;
     justify-content: space-evenly;
     flex-direction: column;
-    height: 17em;
+    height: 22em;
     width: 95%;
     margin: 0 auto;
 }
